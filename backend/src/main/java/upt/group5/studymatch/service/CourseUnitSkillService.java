@@ -1,5 +1,7 @@
 package upt.group5.studymatch.service;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -7,12 +9,9 @@ import org.springframework.web.server.ResponseStatusException;
 import upt.group5.studymatch.model.CourseUnit;
 import upt.group5.studymatch.model.CourseUnitSkill;
 import upt.group5.studymatch.model.Skill;
-
 import upt.group5.studymatch.repository.CourseUnitRepository;
 import upt.group5.studymatch.repository.CourseUnitSkillRepository;
 import upt.group5.studymatch.repository.SkillRepository;
-
-import java.util.List;
 
 @Service
 public class CourseUnitSkillService {
