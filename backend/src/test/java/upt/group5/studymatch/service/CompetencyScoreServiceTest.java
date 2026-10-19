@@ -20,6 +20,7 @@ import upt.group5.studymatch.model.CourseUnitSkill;
 import upt.group5.studymatch.model.Skill;
 import upt.group5.studymatch.repository.AcademicRecordRepository;
 import upt.group5.studymatch.repository.CourseUnitSkillRepository;
+import upt.group5.studymatch.repository.SelfAssessmentRepository;
 import upt.group5.studymatch.repository.StudentRepository;
 
 class CompetencyScoreServiceTest {
@@ -33,6 +34,9 @@ class CompetencyScoreServiceTest {
     @Mock
     private StudentRepository studentRepository;
 
+    @Mock
+    private SelfAssessmentRepository selfAssessmentRepository;
+
     private CompetencyScoreService service;
 
     @BeforeEach
@@ -40,9 +44,10 @@ class CompetencyScoreServiceTest {
         MockitoAnnotations.openMocks(this);
 
         service = new CompetencyScoreService(
-                academicRecordRepository,
-                courseUnitSkillRepository,
-                studentRepository
+        academicRecordRepository,
+        courseUnitSkillRepository,
+        studentRepository,
+        selfAssessmentRepository
         );
     }
 

@@ -1,0 +1,32 @@
+package upt.group5.studymatch.controller;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+import upt.group5.studymatch.dto.OnboardingRequestDTO;
+import upt.group5.studymatch.service.OnboardingService;
+
+@RestController
+@RequestMapping("/api/students/{studentId}/onboarding")
+public class OnboardingController {
+
+    private final OnboardingService onboardingService;
+
+    public OnboardingController(OnboardingService onboardingService) {
+        this.onboardingService = onboardingService;
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public void submitOnboarding(
+            @PathVariable Long studentId,
+            @RequestBody OnboardingRequestDTO request) {
+
+        onboardingService.submitOnboarding(studentId, request);
+    }
+}
