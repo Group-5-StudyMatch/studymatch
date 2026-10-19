@@ -11,9 +11,12 @@ import org.springframework.web.server.ResponseStatusException;
 
 import upt.group5.studymatch.dto.CompetencyScoreDTO;
 import upt.group5.studymatch.model.AcademicRecord;
+import upt.group5.studymatch.model.CompetencyScoreSource;
 import upt.group5.studymatch.model.CourseUnitSkill;
+import upt.group5.studymatch.model.SelfAssessment;
 import upt.group5.studymatch.repository.AcademicRecordRepository;
 import upt.group5.studymatch.repository.CourseUnitSkillRepository;
+import upt.group5.studymatch.repository.SelfAssessmentRepository;
 import upt.group5.studymatch.repository.StudentRepository;
 
 @Service
@@ -22,15 +25,18 @@ public class CompetencyScoreService {
     private final AcademicRecordRepository academicRecordRepository;
     private final CourseUnitSkillRepository courseUnitSkillRepository;
     private final StudentRepository studentRepository;
+    private final SelfAssessmentRepository selfAssessmentRepository;
 
     public CompetencyScoreService(
             AcademicRecordRepository academicRecordRepository,
             CourseUnitSkillRepository courseUnitSkillRepository,
-            StudentRepository studentRepository) {
+            StudentRepository studentRepository,
+            SelfAssessmentRepository selfAssessmentRepository) {
 
         this.academicRecordRepository = academicRecordRepository;
         this.courseUnitSkillRepository = courseUnitSkillRepository;
         this.studentRepository = studentRepository;
+        this.selfAssessmentRepository = selfAssessmentRepository;
     }
 
     public List<CompetencyScoreDTO> calculateScores(Long studentId) {
@@ -59,7 +65,7 @@ public class CompetencyScoreService {
                     .add(record.getGrade());
         }
 
-        // Calculate weighted scores for each skill
+        // Calculate weighted academic scores
         Map<Long, Double> weightedSums = new HashMap<>();
         Map<Long, Double> totalWeights = new HashMap<>();
         Map<Long, String> skillNames = new HashMap<>();
@@ -95,9 +101,10 @@ public class CompetencyScoreService {
             }
         }
 
-        // Build final competency scores
-        List<CompetencyScoreDTO> results = new ArrayList<>();
+        // Store results by skill ID to avoid duplicates
+        Map<Long, CompetencyScoreDTO> results = new HashMap<>();
 
+        // Add academic scores first
         for (Long skillId : weightedSums.keySet()) {
 
             double totalWeight = totalWeights.get(skillId);
@@ -106,13 +113,36 @@ public class CompetencyScoreService {
                     ? weightedSums.get(skillId) / totalWeight
                     : 0.0;
 
-            results.add(new CompetencyScoreDTO(
+            results.put(skillId, new CompetencyScoreDTO(
                     skillId,
                     skillNames.get(skillId),
-                    score
+                    score,
+                    CompetencyScoreSource.ACADEMIC
             ));
         }
 
-        return results;
+        // Get initial self-assessment answers
+        List<SelfAssessment> assessments =
+                selfAssessmentRepository.findByStudentId(studentId);
+
+        for (SelfAssessment assessment : assessments) {
+
+            Long skillId = assessment.getSkill().getId();
+
+            // Academic scores have priority
+            if (!results.containsKey(skillId)) {
+
+                double score = assessment.getLevel() / 3.0;
+
+                results.put(skillId, new CompetencyScoreDTO(
+                        skillId,
+                        assessment.getSkill().getName(),
+                        score,
+                        CompetencyScoreSource.SELF_ASSESSMENT
+                ));
+            }
+        }
+
+        return new ArrayList<>(results.values());
     }
 }
