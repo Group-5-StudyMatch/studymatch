@@ -15,7 +15,6 @@ export default function Layout() {
                 
                 <NavLink to="/">Home</NavLink>
                 <NavLink to="/students">Students</NavLink>
-                <NavLink to="/onboarding">Onboarding</NavLink>
             </nav>
 
             <Outlet />

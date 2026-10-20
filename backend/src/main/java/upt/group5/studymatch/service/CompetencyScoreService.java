@@ -111,7 +111,7 @@ public class CompetencyScoreService {
 
             double score = totalWeight > 0.0
                     ? weightedSums.get(skillId) / totalWeight
-                    : 0.0;
+                    : null;
 
             results.put(skillId, new CompetencyScoreDTO(
                     skillId,

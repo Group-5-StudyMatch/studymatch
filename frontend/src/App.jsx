@@ -21,7 +21,7 @@ export default function App() {
       <Route path="/students/:id/edit" element={<StudentForm />} />
       <Route path="/students/:id/history" element={<AcademicHistory />} />
       <Route path="/students/:id/profile" element={<StudentProfile />} />
-      <Route path="/onboarding" element={<Onboarding />} />
+      <Route path="/students/:id/onboarding" element={<Onboarding />} />
 
       </Route>
       
