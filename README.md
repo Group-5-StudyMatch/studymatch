@@ -11,6 +11,7 @@ StudyMatch is a full-stack software aimed at supporting formation of groups in a
 - Prerequisites:
      - IDE: Visual Studio Code
      - Java Development Kit 17+
+     - Node.js 20.19+ and npm
      - MySQL Server
      - XAMPP (Recommended for local testing/development)
        
@@ -28,17 +29,46 @@ StudyMatch is a full-stack software aimed at supporting formation of groups in a
   3. Build and run the project using Maven:
      ```
      mvn clean install
-     mvn spring-boot: run
+     mvn spring-boot:run
      ```
 
 
-    --- Front-End ---
-  1. Open the "/front-end" directory in a new terminal.
-  2. Install the dependencies and start the development server:
-  ```
-  npm install
-  npm start
-  ```
+   --- Front-End ---
+
+   Requirements:
+   - Node.js 20.19+ (LTS recommended) and npm
+   - The Back-End must be running on http://localhost:8080 for the application to load data. The front-end development server forwards every request starting with `/api` to this address (configured in `frontend/vite.config.js`).
+
+   Steps:
+   1. Open a new terminal and go to the front-end directory:
+```
+      cd frontend
+```
+   2. Install the dependencies (only needed the first time or when `package.json` changes):
+```
+      npm install
+```
+   3. Start the development server (Vite):
+```
+      npm run dev
+```
+   4. Open http://localhost:5173 in your browser.
+
+   Other useful commands (run inside `/frontend`):
+
+```
+   npm run build     # create the production build in /dist
+   npm run preview   # preview the production build locally
+   npm run lint      # run ESLint to check code style
+```
+
+   Testing:
+   - Automated front-end tests are not configured yet. For now, code quality is checked with `npm run lint`. A test framework (e.g. Vitest) can be added in a future sprint.
+
+   Troubleshooting:
+   - `npm install` fails: check your Node.js version with `node -v`.
+   - Port 5173 is already in use: stop the other process, or Vite will suggest the next free port in the terminal.
+   - No data is displayed or requests to `/api` fail: make sure the Back-End is running on port 8080.
 
 
   ----- DEVELOPMENT WORKFLOW -----
