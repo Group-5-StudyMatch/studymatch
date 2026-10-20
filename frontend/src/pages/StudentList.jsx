@@ -28,7 +28,8 @@ export default function StudentList() {
                 <td>
                   <Link to={`/students/${s.id}/edit`}>edit</Link>{' | '}
                   <Link to={`/students/${s.id}/history`}>history</Link>{' | '}
-                  <Link to={`/students/${s.id}/profile`}>profile</Link>
+                  <Link to={`/students/${s.id}/profile`}>profile</Link>{' | '}
+                  <Link to={`/students/${s.id}/onboarding`}>onboarding</Link>
                 </td>
               </tr>
             ))}

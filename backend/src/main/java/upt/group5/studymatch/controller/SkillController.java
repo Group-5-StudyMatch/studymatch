@@ -13,6 +13,9 @@ import upt.group5.studymatch.repository.SkillRepository;
 @RequestMapping("/api/skills")
 public class SkillController {
 
+    public record SkillResponse(Long id, String name) {
+    }
+
     private final SkillRepository skillRepository;
 
     public SkillController(SkillRepository skillRepository) {
@@ -20,7 +23,10 @@ public class SkillController {
     }
 
     @GetMapping
-    public List<Skill> getAllSkills() {
-        return skillRepository.findAll();
+    public List<SkillResponse> getAllSkills() {
+        return skillRepository.findAll()
+        .stream()
+        .map(skill -> new SkillResponse(skill.getId(), skill.getName()))
+        .toList();  
     }
 }
