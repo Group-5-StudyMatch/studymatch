@@ -8,11 +8,23 @@ import Status from '../components/Status'
 // the backend accepts 0 to 3; these labels are a proposal for the team
 // we map these values so the user doesn't just see numbers
 const LEVELS = [
-  { value: 0, label: 'None' },
-  { value: 1, label: 'Basic' },
-  { value: 2, label: 'Intermediate' },
-  { value: 3, label: 'Advanced' },
+  { value: 0, label: 'No experience' },
+  { value: 1, label: 'Basic familiarity' },
+  { value: 2, label: 'Some practical experience' },
+  { value: 3, label: 'Extense practical experience' },
 ]
+
+// keys must match the skill names created by the backend seeder
+const DESCRIPTIONS = {
+  Programming: 'Writing programs, using variables, functions, loops and data structures.',
+  Mathematics: 'Algebra, calculus, discrete mathematics and logical reasoning.',
+  'Digital Systems': 'Logic gates, binary representation and digital circuits.',
+  Electronics: 'Basic circuits, components, sensors and microcontrollers.',
+  'Computer Architecture': 'Processors, memory, instruction sets and low-level computing.',
+  Algorithms: 'Problem decomposition, algorithm design and computational efficiency.',
+  'Development Tools': 'Git, command-line tools, IDEs and debugging.',
+  Networking: 'IP addresses, network protocols and basic network configuration.',
+}
 
 // bouncer for backend errors - translate error codes
 function errorMessage(err) {
@@ -59,16 +71,31 @@ export default function Onboarding() {
   return (
     <>
       <p><Link to="/students">&larr; Back to students</Link></p>
-      <h1>Self-assessment{student.data ? `: ${student.data.name}` : ''}</h1>
-      <p>Rate your current level in each skill. This builds your initial profile until you have grades.</p>
+      <h1>Preliminary questionnaire{student.data ? `: ${student.data.name}` : ''}</h1>
+      <p>You have no academic history in StudyMatch yet, so your answers build your
+        initial profile. Once you have grades, they replace your self-assessment
+        for each skill.
+      </p>
+
+        <p>
+        For each skill, choose the level that best describes you:
+        {' '}<strong>0</strong> no experience, <strong>1</strong> basic familiarity,
+        {' '}<strong>2</strong> some practical experience, <strong>3</strong> extensive
+        practical experience.
+      </p>
 
       <Status loading={student.loading || skills.loading} error={student.error || skills.error} />
 
       {skills.data && skills.data.length > 0 && (
-        <form onSubmit={handleSubmit} style={{ maxWidth: 520 }}>
+        <form onSubmit={handleSubmit} style={{ maxWidth: 560 }}>
           {skills.data.map((s) => (
             <fieldset key={s.id} style={{ marginBottom: 12 }}>
               <legend>{s.name}</legend>
+              {DESCRIPTIONS[s.name] && (
+                <p style={{ margin: '0 0 8px', color: '#6b7280', fontSize: '0.9rem' }}>
+                  {DESCRIPTIONS[s.name]}
+                </p>
+              )}
               {LEVELS.map((l) => (
                 <label key={l.value} style={{ marginRight: 16 }}>
                   <input
