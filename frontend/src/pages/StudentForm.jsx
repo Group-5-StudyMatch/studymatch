@@ -91,7 +91,7 @@ export default function StudentForm() {
     const request = isEdit ? updateStudent(id, payLoad) : createStudent(payLoad)
 
     request
-      .then(() => navigate('/students')) // send the user back to the list if it worked
+      .then((res) => navigate(isEdit ? '/students' : `/students/${res.data.id}/onboarding`)) // redirects the student to onboarding
       .catch((err) => {
         // a 409 error usually means Conflict. Would be telling the email already exists
         if (err.response?.status === 409) {
