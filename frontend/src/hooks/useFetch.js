@@ -26,6 +26,7 @@ export function useFetch(RequestFn, deps = []) {
             .catch((err) => setError(err.response?.data?.message || err.message))
             // regardless of success or failure, turn off the loading state
             .finally(() => setLoading(false))
+            // eslint-disable-next-line react-hooks/use-memo, react-hooks/exhaustive-deps
     }, deps)
 
     // automatically trigger load() function when the component mounts or when any of the dependencies change
