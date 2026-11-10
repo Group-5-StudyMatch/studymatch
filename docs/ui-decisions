@@ -1,0 +1,108 @@
+# D1 — UI and Navigation Decisions
+
+**Project:** StudyMatch  
+**Owner:** Carlos  
+**Status:** Preliminary approval.
+
+## 1. Component library
+
+**Decision: Material UI (MUI)** will be the project's only React component library. Do not add Mantine or another competing component library. Use a shared MUI theme and reusable components rather than styling each screen independently.
+
+Use MUI components for navigation, buttons, inputs, tables, dialogs, alerts, progress indicators, and feedback. Use MUI icons consistently. Custom CSS is allowed for layout and specific visual details, but it must follow the shared design tokens.
+
+## 2. Color palette
+
+The visual style is clear, calm, and professional, suitable for teachers and students. The primary color is indigo; neutral greys carry most of the interface. Status colors are reserved for semantic feedback.
+
+| Token | Hex | Usage |
+| --- | --- | --- |
+| Primary indigo | `#4338CA` | Main actions, active navigation, links |
+| Primary hover | `#3730A3` | Hover state for primary actions |
+| Primary dark | `#312E81` | Strong emphasis when needed |
+| Text primary | `#111827` | Headings and main body text |
+| Text secondary | `#4B5563` | Descriptions, secondary labels |
+| Border grey | `#D1D5DB` | Inputs, dividers, card outlines |
+| Page background | `#F9FAFB` | Page canvas |
+| Surface | `#FFFFFF` | Cards, forms, dialogs, sidebar |
+| Success | `#15803D` | Completed operations and confirmation |
+| Warning | `#B45309` | Incomplete profiles and caution messages |
+| Error | `#B91C1C` | Failed operations and validation errors |
+
+
+## 3. Typography
+
+**Decision: Inter**, with the fallback stack `Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`.
+
+- Page titles: 24 px, weight 600.
+- Section titles: 18–20 px, weight 600.
+- Body text: 16 px, weight 400.
+- Labels, helper text, and table metadata: 14 px, weight 400–500.
+- Keep terminology and capitalization consistent: **Student**, **Profile**, **Formation**, **Group**, **Skill**, and **Onboarding**.
+
+## 4. Application shell and navigation
+
+After login, **Admin** and **Teacher** use a shared application shell: left sidebar, top bar with page title, current user/role and logout, and a main content area. On narrow screens the sidebar becomes an accessible menu drawer. **Student** uses the same visual shell with a smaller, student-specific navigation menu.
+
+- The current route is highlighted in the sidebar.
+- Each screen has one clear heading and consistent spacing.
+- Use descriptive names (for example, **Programming 1**, not **Unit #3**).
+- Hide navigation entries for unauthorized roles. Independently enforce permissions in route guards and in the backend.
+- Never show a sidebar link to an unimplemented or disabled screen.
+- After login, send Admin and Teacher to `/dashboard`; send Student to `/me/onboarding` if first-login onboarding is required, otherwise `/me/profile`.
+
+### Sidebar by role
+
+| Role | Sidebar items and destinations |
+| --- | --- |
+| **Admin** | Dashboard (`/dashboard`); Users (`/admin/users`); Students (`/students`); Courses (`/admin/courses`); Course units (`/admin/course-units`); Academic records (`/admin/academic-records`); Formations (`/formations`) |
+| **Teacher** | Dashboard (`/dashboard`); Students (`/students`); Formations (`/formations`) |
+| **Student** | My profile (`/me/profile`); My history (`/me/history`); My goals (`/me/goals`); My portfolio (`/me/portfolio`) |
+
+The Admin course, course-unit, and academic-record links are shown only if their corresponding Sprint 2 screens exist. Student goals and portfolio links appear only after their optional features are implemented. **Onboarding is a guided flow, not a permanent sidebar item.** Creating a formation is an action on the Formations screen, not a separate permanent sidebar item.
+
+## 5. Screen and URL inventory
+
+The following paths are the **agreed route targets** for Sprint 3. They are proposed navigation decisions, not a claim that all routes already exist in the current codebase. Existing Sprint 2 routes should be aligned or redirected when the relevant screen is integrated.
+
+| Screen | URL | Who can access | Notes |
+| --- | --- | --- | --- |
+| Login | `/login` | Public | Email/password login; redirect authenticated users |
+| Dashboard | `/dashboard` | Admin, Teacher | Overview and statistics |
+| User management | `/admin/users` | Admin | View, create, edit and manage accounts |
+| Students list | `/students` | Admin, Teacher | Search/select students; display names, not raw IDs |
+| Student profile | `/students/:studentId/profile` | Admin, Teacher | Skills, evidence and missing information |
+| Courses | `/admin/courses` | Admin | Existing Sprint 2 screen, if available |
+| Course units | `/admin/course-units` | Admin | Existing Sprint 2 screen, if available |
+| Academic records | `/admin/academic-records` | Admin | Existing Sprint 2 screen, if available |
+| Formation history/list | `/formations` | Admin, Teacher | Existing and previous formations |
+| Formation wizard | `/formations/new` | Admin, Teacher | Select students, strategy and group options |
+| Formation results | `/formations/:formationId` | Admin, Teacher | Groups, scores and explanations |
+| Manual formation adjustment | `/formations/:formationId/adjust` | Admin, Teacher | Move/swap members when available |
+| Compare formations | `/formations/compare` | Admin, Teacher | Optional G12; hide until implemented |
+| My profile | `/me/profile` | Student | Own competency profile only |
+| First-login onboarding | `/me/onboarding` | Student | Initial self-assessment flow |
+| My goals | `/me/goals` | Student | Development goals; hide until implemented |
+| My history | `/me/history` | Student | Only the student's own permitted history |
+| My portfolio | `/me/portfolio` | Student | Own portfolio/export; hide until implemented |
+| Access denied | `/403` | All | Plain-language permission error |
+| Not found | `/404` | All | Helpful message and return-navigation link |
+
+
+
+## 6. Shared interface rules
+
+All screens must follow the backlog's quality standard:
+
+- Provide **loading, empty, error and success** states.
+- Validate forms before submission and show backend errors in plain language.
+- Use consistent buttons, labels, spacing and confirmation dialogs.
+- Support both **360 px** and **1280 px** viewport widths.
+- Associate labels with inputs, provide visible keyboard focus and support keyboard navigation.
+- Never show internal database IDs as user facing labels; avoid dead links and browser console errors.
+- Confirm consequential actions and provide feedback after save, delete, or formation changes.
+
+## 7. Approval and implementation guidance
+
+This document defines the intended **design and navigation decisions**. F1 will implement the MUI theme/component foundation; F2 will implement the shared shell; A6/A7 will implement login, guards and role-aware navigation. Other screens will reuse these decisions.
+
+
