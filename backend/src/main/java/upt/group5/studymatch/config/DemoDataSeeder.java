@@ -8,18 +8,24 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import upt.group5.studymatch.model.AcademicRecord;
 import upt.group5.studymatch.model.Course;
 import upt.group5.studymatch.model.CourseUnit;
 import upt.group5.studymatch.model.CourseUnitSkill;
 import upt.group5.studymatch.model.Skill;
+import upt.group5.studymatch.model.Student;
+import upt.group5.studymatch.repository.AcademicRecordRepository;
 import upt.group5.studymatch.repository.CourseRepository;
 import upt.group5.studymatch.repository.CourseUnitRepository;
 import upt.group5.studymatch.repository.CourseUnitSkillRepository;
 import upt.group5.studymatch.repository.SkillRepository;
+import upt.group5.studymatch.repository.StudentRepository;
 
 @Component
+@Profile("!test")
 public class DemoDataSeeder implements CommandLineRunner {
 
     private record Mapping(String skill, double weight) {
@@ -29,17 +35,23 @@ public class DemoDataSeeder implements CommandLineRunner {
     private final CourseUnitRepository courseUnitRepository;
     private final CourseUnitSkillRepository courseUnitSkillRepository;
     private final SkillRepository skillRepository;
+    private final StudentRepository studentRepository;
+    private final AcademicRecordRepository academicRecordRepository;
 
     public DemoDataSeeder(
             CourseRepository courseRepository,
             CourseUnitRepository courseUnitRepository,
             CourseUnitSkillRepository courseUnitSkillRepository,
-            SkillRepository skillRepository) {
+            SkillRepository skillRepository,
+            StudentRepository studentRepository,
+            AcademicRecordRepository academicRecordRepository) {
 
         this.courseRepository = courseRepository;
         this.courseUnitRepository = courseUnitRepository;
         this.courseUnitSkillRepository = courseUnitSkillRepository;
         this.skillRepository = skillRepository;
+        this.studentRepository = studentRepository;
+        this.academicRecordRepository = academicRecordRepository;
     }
 
     @Override
@@ -82,8 +94,10 @@ public class DemoDataSeeder implements CommandLineRunner {
 
         Course course = courseRepository.save(new Course("Computer Engineering"));
 
+        Map<String, CourseUnit> savedUnits = new HashMap<>();
         units.forEach((unitName, mappings) -> {
             CourseUnit unit = courseUnitRepository.save(new CourseUnit(unitName, course));
+            savedUnits.put(unitName, unit);
 
             for (Mapping m : mappings) {
                 Skill skill = skills.computeIfAbsent(
@@ -92,5 +106,33 @@ public class DemoDataSeeder implements CommandLineRunner {
                         new CourseUnitSkill(unit, skill, m.weight()));
             }
         });
+
+        List<CourseUnit> unitList = List.copyOf(savedUnits.values());
+
+        // 1. 16 students (8 betweeen 20 notes)
+        for (int i = 1; i <= 16; i++) {
+            String instNum = String.format("202610%02d", i);
+            String name = "Academic Student " + i;
+            String email = "academic.student" + i + "@studymatch.upt.pt";
+
+            Student student = studentRepository.save(new Student(instNum, name, email));
+
+            for (int j = 0; j < 3; j++) {
+                CourseUnit unit = unitList.get((i + j) % unitList.size());
+                int grade = 8 + ((i * 3 + j * 5) % 13); // 8-20 arası not üretimi
+                
+                academicRecordRepository.save(new AcademicRecord(
+                        student, unit, "Final Exam", grade));
+            }
+        }
+
+        // 2. 7 Cold-Start Student (without notes)
+        for (int i = 1; i <= 7; i++) {
+            String instNum = String.format("202620%02d", i);
+            String name = "ColdStart Student " + i;
+            String email = "coldstart.student" + i + "@studymatch.upt.pt";
+
+            studentRepository.save(new Student(instNum, name, email));
+        }
     }
 }
