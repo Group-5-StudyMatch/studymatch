@@ -6,6 +6,7 @@ import { ThemeProvider, CssBaseline } from '@mui/material';
 // import the custom theme for the app
 import theme from './theme/theme.js';
 
+import ToastProvider from './components/ToastProvider'
 import './index.css'
 import App from './App.jsx'
 
@@ -20,7 +21,9 @@ createRoot(document.getElementById('root')).render(
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <BrowserRouter>
-      <App />
+        <ToastProvider>
+          <App />
+        </ToastProvider>
       </BrowserRouter>
     </ThemeProvider>
   </StrictMode>

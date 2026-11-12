@@ -8,6 +8,7 @@ import StudentForm from './pages/StudentForm'
 import AcademicHistory from './pages/AcademicHistory'
 import StudentProfile from './pages/StudentProfile'
 import Onboarding from './pages/Onboarding'
+import NotFound from './pages/NotFound'
 
 // the main app component 
 export default function App() {
@@ -22,6 +23,7 @@ export default function App() {
       <Route path="/students/:id/history" element={<AcademicHistory />} />
       <Route path="/students/:id/profile" element={<StudentProfile />} />
       <Route path="/students/:id/onboarding" element={<Onboarding />} />
+      <Route path="*" element={<NotFound />} />
 
       </Route>
       
