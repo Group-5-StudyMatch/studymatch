@@ -14,7 +14,7 @@ public class Student {
     @Id //chave primaria da tabela
     @GeneratedValue(strategy = GenerationType.IDENTITY) //gera automaticamente o id
     private Long id;
-
+    
     @Column(nullable = false)
     private String institutionalNumber;
 
