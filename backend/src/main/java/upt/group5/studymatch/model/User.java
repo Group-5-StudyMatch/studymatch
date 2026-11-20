@@ -24,6 +24,9 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(name = "name")
+    private String name;
+
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
@@ -94,6 +97,14 @@ public class User {
 
     public void setStudent(Student student) {
         this.student = student;
+    }
+
+    public String getName() {
+    return name;
+    }
+
+    public void setName(String name) {
+    this.name = name;
     }
 }
 

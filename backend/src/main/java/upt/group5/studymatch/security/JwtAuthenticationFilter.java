@@ -1,3 +1,4 @@
+
 package upt.group5.studymatch.security;
 
 import java.io.IOException;
@@ -21,8 +22,6 @@ import upt.group5.studymatch.repository.UserRepository;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
-    //class that alows execute filter once for request
 
     private final JwtService jwtService;
     private final UserRepository userRepository;
@@ -52,23 +51,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = authHeader.substring(7);
 
         try {
-            // validate the jwt and get the user email
+            // validate the jwt and get the user id
             Claims claims = jwtService.validateToken(token);
-            String email = claims.getSubject();
+            Long userId = Long.valueOf(claims.getSubject());
 
-            if (email != null && !email.isBlank()
-                    && SecurityContextHolder.getContext()
-                            .getAuthentication() == null) {
+            if (SecurityContextHolder.getContext()
+                    .getAuthentication() == null) {
 
                 // find the user associated with the token
                 Optional<User> userOptional =
-                        userRepository.findByEmail(email);
+                        userRepository.findById(userId);
 
                 if (userOptional.isPresent()) {
                     User user = userOptional.get();
 
                     // only authenticate active users
-                    if (user.isActive()) {
+                    if (user.isActive()
+                            && user.getRole().name().equals(
+                                    claims.get("role", String.class))) {
 
                         // convert the user role into a spring security authority
                         SimpleGrantedAuthority authority =
